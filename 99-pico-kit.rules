@@ -1,0 +1,19 @@
+# pico_kit -- let the logged-in desktop user talk to RP2040 boards without
+# being added to the dialout group.
+#
+#   2e8a  Raspberry Pi   (RP2040 bootrom in BOOTSEL, MicroPython builds)
+#   239a  Adafruit       (CircuitPython builds)
+#
+# TAG+="uaccess" hands the device to whoever is physically logged in, via
+# systemd-logind ACLs. The GROUP/MODE pair is a fallback for cases where
+# logind is not managing the seat.
+#
+# The input rules matter for the validation harness: it opens the board's
+# own event nodes read-write so it can EVIOCGRAB them, which keeps test
+# keystrokes and mouse motion away from the desktop entirely.
+
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2e8a", TAG+="uaccess", GROUP="plugdev", MODE="0660"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="239a", TAG+="uaccess", GROUP="plugdev", MODE="0660"
+
+SUBSYSTEM=="input", ATTRS{idVendor}=="2e8a", TAG+="uaccess", GROUP="plugdev", MODE="0660"
+SUBSYSTEM=="input", ATTRS{idVendor}=="239a", TAG+="uaccess", GROUP="plugdev", MODE="0660"
